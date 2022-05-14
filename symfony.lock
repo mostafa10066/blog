@@ -40,6 +40,19 @@
             "./src/Repository/.gitignore"
         ]
     },
+    "doctrine/doctrine-migrations-bundle": {
+        "version": "3.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "3.1",
+            "ref": "ee609429c9ee23e22d6fa5728211768f51ed2818"
+        },
+        "files": [
+            "./config/packages/doctrine_migrations.yaml",
+            "./migrations/.gitignore"
+        ]
+    },
     "doctrine/event-manager": {
         "version": "1.1.1"
     },
@@ -52,6 +65,9 @@
     "doctrine/lexer": {
         "version": "1.2.3"
     },
+    "doctrine/migrations": {
+        "version": "3.5.1"
+    },
     "doctrine/orm": {
         "version": "2.12.2"
     },
@@ -60,6 +76,9 @@
     },
     "doctrine/sql-formatter": {
         "version": "1.1.2"
+    },
+    "friendsofphp/proxy-manager-lts": {
+        "version": "v1.0.12"
     },
     "friendsofsymfony/rest-bundle": {
         "version": "3.3",
@@ -101,6 +120,9 @@
     },
     "knplabs/knp-paginator-bundle": {
         "version": "v5.8.0"
+    },
+    "laminas/laminas-code": {
+        "version": "4.5.1"
     },
     "nelmio/cors-bundle": {
         "version": "2.2",
@@ -155,6 +177,9 @@
         "files": [
             "./config/packages/stof_doctrine_extensions.yaml"
         ]
+    },
+    "symfony-cmf/slugifier-api": {
+        "version": "2.1.0"
     },
     "symfony/asset": {
         "version": "v6.0.7"
@@ -256,6 +281,9 @@
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
     },
+    "symfony/mime": {
+        "version": "v6.0.8"
+    },
     "symfony/options-resolver": {
         "version": "v6.0.3"
     },
@@ -266,6 +294,9 @@
         "version": "v1.25.0"
     },
     "symfony/polyfill-intl-icu": {
+        "version": "v1.25.0"
+    },
+    "symfony/polyfill-intl-idn": {
         "version": "v1.25.0"
     },
     "symfony/polyfill-intl-normalizer": {
@@ -322,6 +353,9 @@
     },
     "symfony/service-contracts": {
         "version": "v3.0.1"
+    },
+    "symfony/stopwatch": {
+        "version": "v6.0.5"
     },
     "symfony/string": {
         "version": "v6.0.8"

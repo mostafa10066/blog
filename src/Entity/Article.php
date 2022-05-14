@@ -6,8 +6,14 @@ use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\SerializedName;
+use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation\VirtualProperty;
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Article
 {
     #[ORM\Id]
@@ -18,30 +24,50 @@ class Article
 
     #[ORM\Column(type: 'text')]
     #[Groups(["article_list"])]
+    #[Assert\NotBlank()]
     private $header;
 
     #[ORM\Column(type: 'text')]
     #[Groups(["article_list"])]
+    #[Assert\NotBlank()]
     private $body;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(["article_list"])]
+    #[Assert\NotBlank()]
     private $writer;
 
     #[ORM\Column(type: 'datetime')]
     #[Groups(["article_list"])]
     private $created_at;
 
-    #[ORM\Column(type: 'datetime')]
-    private $updated_at;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(["article_list"])]
+    /**
+     * @Gedmo\Slug(fields={"header"})
+     */
     private $slug;
 
-    #[ORM\OneToMany(mappedBy: 'article', targetEntity: Comment::class)]
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: Comment::class,cascade:["persist"])]
     private $comments;
+
+    #[ORM\ManyToOne(targetEntity: Media::class, inversedBy: 'articles')]
+    #[Assert\NotBlank()]
+    private $teaser_image;
+
+
+    /**
+     * @VirtualProperty
+     * @SerializedName("num_comments")
+     * @return int
+     * @Groups ({"article_list"})
+     */
+    public function getNumberOfComments(){
+
+        return count($this->getComments());
+    }
 
     public function __construct()
     {
@@ -89,6 +115,12 @@ class Article
         return $this;
     }
 
+    #[ORM\PrePersist]
+    public function setCreatedAtTime(): void
+    {
+        $this->created_at = new \DateTime("now");
+    }
+
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->created_at;
@@ -101,17 +133,6 @@ class Article
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updated_at;
-    }
-
-    public function setUpdatedAt(\DateTimeInterface $updated_at): self
-    {
-        $this->updated_at = $updated_at;
-
-        return $this;
-    }
 
     public function getSlug(): ?string
     {
@@ -154,4 +175,18 @@ class Article
 
         return $this;
     }
+
+    public function getTeaserImage(): ?Media
+    {
+        return $this->teaser_image;
+    }
+
+    public function setTeaserImage(?Media $teaser_image): self
+    {
+        $this->teaser_image = $teaser_image;
+
+        return $this;
+    }
+
+
 }

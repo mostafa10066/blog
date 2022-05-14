@@ -5,8 +5,10 @@ namespace App\Controller\Api\V1;
 
 
 use App\Entity\Article;
+use App\Entity\Comment;
 use App\Entity\User;
 use App\Form\ArticleType;
+use App\Form\CommentType;
 use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -20,51 +22,49 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 
-class ArticleController extends AbstractFOSRestController
+class CommentController extends AbstractFOSRestController
 {
     private EntityManagerInterface $em;
-    private SluggerInterface $slugger;
-    public function __construct(SluggerInterface $slugger,EntityManagerInterface $em){
+    public function __construct(EntityManagerInterface $em){
         $this->em=$em;
-        $this->slugger=$slugger;
     }
 
     /**
-     * @Rest\Get("/articles/{id}")
+     * @Rest\Get("/articles/{id}/comments")
      * @ParamConverter("article", class = "App\Entity\Article")
      * @param Article $article
      * @return Response
      */
     public function show(Article $article){
-        $view = $this->view(array('data'=>$article));
+        $comments=$article->getComments();
+        $view = $this->view(array('data'=>$comments));
         $view->getContext()->setGroups(array(
-            'article_list',
-            'writer'=>array('user_list')
+            'comment_list',
         ));
         $view->getContext()->setSerializeNull(true);
         return $this->handleView($view);
     }
     /**
      * Creates a user
-     * @Rest\Post("/articles")
+     * @Rest\Post("/articles/{id}/comments")
      * @param Request $request
+     * @param Article $article
      * @return Response
      */
-    public function create(Request $request){
-        $article= new Article();
-        $form = $this->createForm(ArticleType::class,$article);
+    public function create(Article $article, Request $request){
+        $comment= new Comment();
+        $form = $this->createForm(CommentType::class,$comment);
         $form->handleRequest($request);
         $parameters = json_decode($request->getContent(), true);
         $form->submit($parameters['data']);
-
         if ($form->isValid()) {
-            $article->setSlug($this->slugger->slug($article->getHeader()));
+            $comment=$form->getData();
+            $article->addComment($comment);
             $this->em->persist($article);
             $this->em->flush();
-            $view = $this->view(array('data'=>$article),201);
+            $view = $this->view(array('data'=>$comment),201);
             $view->getContext()->setGroups(array(
-                'article_list',
-                'writer'=>array('user_list')
+                'comment_list',
             ));
             $view->getContext()->setSerializeNull(true);
             return $this->handleView($view);
