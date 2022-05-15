@@ -16,6 +16,7 @@
         "friendsofsymfony/rest-bundle": "^3.3",
         "jms/serializer-bundle": "^4.0",
         "knplabs/knp-paginator-bundle": "^5.8",
+        "nelmio/api-doc-bundle": "^4.9",
         "nelmio/cors-bundle": "^2.2",
         "sensio/framework-extra-bundle": "^6.2",
         "stof/doctrine-extensions-bundle": "^1.7",
@@ -29,6 +30,7 @@
         "symfony/mime": "6.0.*",
         "symfony/runtime": "6.0.*",
         "symfony/security-bundle": "6.0.*",
+        "symfony/twig-bundle": "6.0.*",
         "symfony/validator": "6.0.*",
         "symfony/webpack-encore-bundle": "^1.14",
         "symfony/yaml": "6.0.*"

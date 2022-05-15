@@ -28,7 +28,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups(["user_list"])]
+    #[Groups(["user_list","create_user"])]
     #[Assert\NotBlank()]
     private $email;
 
@@ -36,6 +36,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $roles = [];
 
     #[ORM\Column(type: 'string')]
+    #[Groups(["create_user"])]
     #[Assert\NotBlank()]
     private $password;
 
@@ -44,11 +45,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'string', length: 80)]
     #[Assert\NotBlank()]
-    #[Groups(["user_list"])]
+    #[Groups(["user_list","create_user"])]
     private $name;
 
     #[ORM\Column(type: 'string', length: 80)]
-    #[Groups(["user_list"])]
+    #[Groups(["user_list","create_user"])]
     #[Assert\NotBlank()]
     private $surname;
 

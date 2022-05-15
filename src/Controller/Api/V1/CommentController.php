@@ -20,8 +20,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\String\Slugger\SluggerInterface;
-
-
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+/**
+ * Class Comment
+ *
+ * @OA\Tag(name="Comment")
+ */
 class CommentController extends AbstractFOSRestController
 {
     private EntityManagerInterface $em;
@@ -29,13 +34,35 @@ class CommentController extends AbstractFOSRestController
         $this->em=$em;
     }
 
+
+
+
     /**
-     * @Rest\Get("/articles/{id}/comments")
+     * @Rest\Get("/articles/{slug}/comments")
      * @ParamConverter("article", class = "App\Entity\Article")
      * @param Article $article
      * @return Response
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns the list of Article Comments",
+     *     @OA\JsonContent(
+     *              type="object",
+     *              title="List of Article Comments",
+     *              @OA\Property(
+     *                   property="data",
+     *                   type="object",
+     *                   @OA\Property (
+     *                        property="items",
+     *                        type="array",
+     *                        @OA\Items(ref=@Model(type=Comment::class, groups={"comment_list"}))
+     *
+     *                   )
+     *
+     *              ),
+     *     )
+     * )
      */
-    public function show(Article $article){
+    public function index(Article $article){
         $comments=$article->getComments();
         $view = $this->view(array('data'=>$comments));
         $view->getContext()->setGroups(array(
@@ -45,11 +72,29 @@ class CommentController extends AbstractFOSRestController
         return $this->handleView($view);
     }
     /**
-     * Creates a user
-     * @Rest\Post("/articles/{id}/comments")
+     * Creates a comment
+     * @Rest\Post("/articles/{slug}/comments")
      * @param Request $request
      * @param Article $article
      * @return Response
+     *     @OA\RequestBody(
+     *         description="add new Comment",
+     *         required=true,
+     *       @OA\MediaType(
+     *           mediaType="raw",
+     *           @OA\Schema(type="object",
+     *             @OA\Property(property="data", ref=@Model(type=Comment::class,groups={"create_comment"}))
+     *         )
+     *      )
+     *    )
+     *    @OA\Response(
+     *           response="201",
+     *           description="Response",
+     *        @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="data", type="object", ref=@Model(type=Comment::class)),
+     *        )
+     *    )
      */
     public function create(Article $article, Request $request){
         $comment= new Comment();

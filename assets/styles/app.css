@@ -1,3 +1,16 @@
 body {
     background-color: lightgray;
 }
+.each-article{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+form{
+    display: flex;
+    flex-direction: column;
+}
+.comment{
+    width: 100%;
+    border: 1px dashed black;
+}

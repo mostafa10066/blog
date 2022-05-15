@@ -19,12 +19,22 @@ class Comment
     private $id;
 
     #[ORM\Column(type: 'text')]
-    #[Groups(["comment_list"])]
+    #[Groups(["comment_list","create_comment"])]
     #[Assert\NotBlank()]
     private $text;
 
     #[ORM\ManyToOne(targetEntity: Article::class, inversedBy: 'comments')]
     private $article;
+
+    #[ORM\Column(type: 'string', length: 80)]
+    #[Groups(["comment_list","create_comment"])]
+    #[Assert\NotBlank()]
+    private $name;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["comment_list","create_comment"])]
+    #[Assert\NotBlank()]
+    private $email;
 
 
 
@@ -54,6 +64,30 @@ class Comment
     public function setArticle(?Article $article): self
     {
         $this->article = $article;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }

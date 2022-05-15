@@ -12,6 +12,7 @@ use JMS\Serializer\Annotation\SerializedName;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\VirtualProperty;
+
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Article
@@ -19,32 +20,32 @@ class Article
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(["article_list"])]
+    #[Groups(["article_list","article_details"])]
     private $id;
 
     #[ORM\Column(type: 'text')]
-    #[Groups(["article_list"])]
+    #[Groups(["article_list","article_details","create_article"])]
     #[Assert\NotBlank()]
     private $header;
 
     #[ORM\Column(type: 'text')]
-    #[Groups(["article_list"])]
+    #[Groups(["article_details","create_article"])]
     #[Assert\NotBlank()]
     private $body;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["article_list"])]
+    #[Groups(["article_list","article_details","create_article"])]
     #[Assert\NotBlank()]
     private $writer;
 
     #[ORM\Column(type: 'datetime')]
-    #[Groups(["article_list"])]
+    #[Groups(["article_list","article_details"])]
     private $created_at;
 
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["article_list"])]
+    #[Groups(["article_list","article_details"])]
     /**
      * @Gedmo\Slug(fields={"header"})
      */
@@ -54,6 +55,7 @@ class Article
     private $comments;
 
     #[ORM\ManyToOne(targetEntity: Media::class, inversedBy: 'articles')]
+    #[Groups(["article_list","article_details","create_article"])]
     #[Assert\NotBlank()]
     private $teaser_image;
 
@@ -62,12 +64,33 @@ class Article
      * @VirtualProperty
      * @SerializedName("num_comments")
      * @return int
-     * @Groups ({"article_list"})
+     * @Groups ({"article_list","article_details"})
      */
     public function getNumberOfComments(){
 
         return count($this->getComments());
     }
+
+    /**
+     * @VirtualProperty
+     * @SerializedName("body")
+     * @return string
+     * @Groups ({"article_list"})
+     */
+    public function getPartOfArticle(){
+       return $this->limit_text($this->getBody(),80);
+    }
+
+
+    function limit_text($text, $limit) {
+        if (str_word_count($text, 0) > $limit) {
+            $words = str_word_count($text, 2);
+            $pos   = array_keys($words);
+            $text  = substr($text, 0, $pos[$limit]) . '...';
+        }
+        return $text;
+    }
+
 
     public function __construct()
     {

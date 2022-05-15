@@ -16,8 +16,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-
-
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+/**
+ * Class User
+ *
+ * @OA\Tag(name="User")
+ */
 class UserController extends AbstractFOSRestController
 {
     private EntityManagerInterface $em;
@@ -32,6 +37,15 @@ class UserController extends AbstractFOSRestController
      * @ParamConverter("user", class = "App\Entity\User")
      * @param User $user
      * @return Response
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns a User",
+     *     @OA\JsonContent(
+     *              type="object",
+     *              title="A User",
+     *               @OA\Property(property="data", type="object",ref=@Model(type=User::class,groups={"user_list"})),
+     *    )
+     * )
      */
     public function show(User $user){
         $view = $this->view(array('data'=>$user));
@@ -48,6 +62,24 @@ class UserController extends AbstractFOSRestController
      * @Rest\Post("/users")
      * @param Request $request
      * @return Response
+     *     @OA\RequestBody(
+     *         description="add new User",
+     *         required=true,
+     *       @OA\MediaType(
+     *           mediaType="raw",
+     *           @OA\Schema(type="object",
+     *             @OA\Property(property="data", ref=@Model(type=User::class,groups={"create_user"}))
+     *         )
+     *      )
+     *    )
+     *    @OA\Response(
+     *           response="201",
+     *           description="Response",
+     *        @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="data", type="object", ref=@Model(type=User::class)),
+     *        )
+     *    )
      */
     public function create(Request $request)
     {

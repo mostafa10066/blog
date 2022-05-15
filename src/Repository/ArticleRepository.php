@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Article;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @extends ServiceEntityRepository<Article>
@@ -16,8 +17,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ArticleRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private PaginatorInterface $pagination;
+    public function __construct(ManagerRegistry $registry,PaginatorInterface $pagination)
     {
+        $this->pagination=$pagination;
         parent::__construct($registry, Article::class);
     }
 
@@ -39,6 +42,17 @@ class ArticleRepository extends ServiceEntityRepository
         }
     }
 
+    public function getArticles(){
+        $qb=$this->createQueryBuilder('a')
+            ->orderBy('a.created_at', 'DESC');
+        $query=$qb->getQuery();
+        return  $this->pagination->paginate(
+            $query,
+             1,
+             10
+        );
+
+    }
 //    /**
 //     * @return Article[] Returns an array of Article objects
 //     */
