@@ -140,7 +140,7 @@ class ArticleController extends AbstractFOSRestController
             $this->em->flush();
             $view = $this->view(array('data'=>$article),201);
             $view->getContext()->setGroups(array(
-                'article_list',
+                'article_details',
                 'writer'=>array('user_list'),
                 'teaser_image'=>array('media_list')
             ));

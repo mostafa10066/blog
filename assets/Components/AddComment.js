@@ -1,24 +1,33 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 
 function AddComment({handleSubmitComment}) {
     const [errors,setErrors]=useState([])
     const handleSubmit=async(e)=>{
         e.preventDefault();
-        setErrors([])
         const form = e.target;
         const numberOfErrors=await validation(form)
-        if(numberOfErrors===0) handleSubmitComment(form.elements)
+        if(numberOfErrors===0){
+            handleSubmitComment(form.elements)
+            resetForm(form)
+        }
 
     }
     const validation=async (form)=>{
+        setErrors([])
         let numErrors=0
-        for (const [key, eachFormEl] of Object.entries(form.elements)) {
+        Array.from(form.elements).forEach(eachFormEl => {
             if(eachFormEl.value.trim()==="" && eachFormEl.name!=="submit") {
                 numErrors++
                 setErrors(prevState => [...prevState,{id:eachFormEl.name,value:eachFormEl.name+" is required"}])
+
             }
-        }
+        })
         return numErrors
+    }
+    const resetForm=(form)=>{
+        Array.from(form.elements).forEach(eachFormEl => {
+            eachFormEl.value= ""
+        })
     }
     return (
        <div>
